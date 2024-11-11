@@ -1,0 +1,35 @@
+services:
+  backend:
+    build: .
+    container_name: rust_backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres:password@db:5432/my_database
+    env_file:
+      .env
+    networks:
+      - rust_network
+
+  db:
+    image: postgres:15
+    container_name: rust_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: my_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rust_network
+
+networks:
+  rust_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
